@@ -16,13 +16,14 @@ export default function Portfolio() {
   const fetchQuote = async () => {
   setLoading(true);
   try {
-    // detecta ambiente (local, navegador ou Vercel SSR)
-    const baseUrl =
-      typeof window === "undefined"
-        ? process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : "http://localhost:3000"
-        : "";
+    // Detecta se está no servidor (SSR) ou navegador (client)
+    const isServer = typeof window === "undefined";
+
+    const baseUrl = isServer
+      ? process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000"
+      : "";
 
     const res = await fetch(`${baseUrl}/api/quote`, { cache: "no-store" });
 
@@ -38,6 +39,7 @@ export default function Portfolio() {
     setLoading(false);
   }
 };
+
 
 
   const renderHome = () => (
