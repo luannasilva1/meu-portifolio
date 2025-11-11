@@ -16,7 +16,16 @@ export default function Portfolio() {
   const fetchQuote = async () => {
   setLoading(true);
   try {
-    const res = await fetch('/api/quote'); // rota interna (sem CORS)
+    // detecta ambiente (local, navegador ou Vercel SSR)
+    const baseUrl =
+      typeof window === "undefined"
+        ? process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000"
+        : "";
+
+    const res = await fetch(`${baseUrl}/api/quote`, { cache: "no-store" });
+
     if (!res.ok) {
       throw new Error(`Erro HTTP: ${res.status}`);
     }
@@ -24,7 +33,7 @@ export default function Portfolio() {
     const data = await res.json();
     setQuote(data);
   } catch (err) {
-    console.error('Erro ao buscar citação:', err);
+    console.error("❌ Erro ao buscar citação:", err);
   } finally {
     setLoading(false);
   }
